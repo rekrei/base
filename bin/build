@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+PUSH=0
+
+while getopts ":p" opt; do
+  case $opt in
+    p)
+      PUSH=1
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      exit 1
+      ;;
+  esac
+done
+
+echo "== Building base image =="
+echo "== Gathering variables =="
+HASH="$(git log --pretty=format:'%h' -n 1)"
+echo "HASH: $HASH"
+VERSION="$(awk 'match($0,/ruby:(2.4.2)/) { print substr($0,RSTART+5)}' Dockerfile)"
+echo "VERSION: $VERSION"
+echo "== Building =="
+docker build . -t rekrei/rekrei-base:$VERSION -t rekrei/rekrei-base:latest -t rekrei/rekrei-base:$HASH
+echo "== Built =="
+if [ "$PUSH" -eq 1 ]; then
+  echo "== Pushing to Docker Hub =="
+  docker push rekrei/rekrei-base
+  echo "== Pushed =="
+fi
+echo "== Done =="
