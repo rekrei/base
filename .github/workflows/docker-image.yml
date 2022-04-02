@@ -7,9 +7,16 @@ on:
     branches: [ master ]
 
 jobs:
-  docker:
+  build_and_push:
     runs-on: ubuntu-latest
     steps:
+      - 
+        name: Set outputs
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      - 
+        name: Check outputs
+        run: echo ${{ steps.vars.outputs.sha_short }}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1    
@@ -30,5 +37,5 @@ jobs:
           tags: |
             rekrei/base:latest
             rekrei/base:main
-            rekrei/base:${GITHUB_SHA:8}
+            rekrei/base:${{ steps.vars.outputs.sha_short }}
             
