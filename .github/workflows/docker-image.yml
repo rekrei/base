@@ -30,5 +30,4 @@ jobs:
           tags: |
             rekrei/base:latest
             rekrei/base:main
-            rekrei/base:$(git rev-parse --short HEAD)
             
